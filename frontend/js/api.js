@@ -264,3 +264,10 @@ const API = {
     return data;
   }
 };
+
+// Global exports: Expose both uppercase API and lowercase api to window scope
+if (typeof window !== 'undefined') {
+  window.API = API;
+  window.api = API;
+}
+

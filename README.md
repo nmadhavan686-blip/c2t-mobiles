@@ -1,181 +1,136 @@
-# C2T MOBILES - Second-Hand Smartphone E-Commerce Platform
+# C2T MOBILES - Production Android APK Project
 
-**C2T MOBILES** is a complete, modern, production-ready second-hand / refurbished smartphone e-commerce web application.
-
-> **Core Business Model**:
-> C2T MOBILES sells pre-owned smartphones through direct WhatsApp communication. There is **NO** direct online purchase, cart checkout, or payment gateway on the website.
-> Clicking **"BUY ON WHATSAPP"** logs the inquiry analytics and immediately opens WhatsApp with a pre-filled, product-specific message containing device name, storage, colour, battery health %, condition, price, and product ID.
+This folder contains the complete, production-ready native Android wrapper project for **C2T MOBILES** (`com.c2tmobiles.app`).
 
 ---
 
 ## 🌟 Key Features
 
-### Customer Features:
-- **Premium Dark + Light Identity**: Modern dark header and accents combined with crisp, high-contrast product cards and clean typography.
-- **Direct WhatsApp Commerce**: Every product features a prominent "Buy on WhatsApp" CTA.
-- **Mobile-First Responsive Layout**: Includes sticky bottom navigation bar (Home, Mobiles, Search, WhatsApp), mobile drawer menu, and floating WhatsApp CTA.
-- **Comprehensive Product Details**: 15-point "Phone Condition Details" inspection matrix (Display, Body, Camera, Battery, Speaker, Mic, Charging Port, Face ID, Network, Repairs).
-- **Dynamic Image Gallery**: Multi-photo switcher with lightbox view and zoom.
-- **Real-time Search & Multi-Filter**: Filter by Brand (Apple, Samsung, OnePlus, Pixel, etc.), Price Range, Condition Grade, Storage, and Availability.
-- **Indian Rupee Formatting**: Prices rendered as `₹32,999` with proper Indian digit grouping.
+1. **WebView Integration**:
+   - Loads production HTTPS URL (`https://c2tmobiles.com`).
+   - Complete support for JavaScript, DOM storage, session storage, and persistent cookies (`CookieManager`).
+   - Hardware acceleration and smooth viewport zooming.
 
-### Admin Panel (`/admin`):
-- **Secured Authentication**: Protected dashboard routes with session cookies and bcrypt password hashing.
-- **Store Overview KPIs**: Track total inventory, available devices, sold-out items, and total WhatsApp enquiries.
-- **Full Inventory Stock Management**: Add, Edit, Delete devices with 15-point condition matrix inputs.
-- **Multi-Image Management**: Drag/upload multiple device photos with automatic compression and optimization.
-- **Sold Status Toggle**: Switch status between `AVAILABLE` and `SOLD` with custom product badges (`HOT DEAL`, `FEATURED`, `SALE`, `SOLD OUT`).
-- **Configurable WhatsApp Settings**: Update `OWNER_WHATSAPP_NUMBER` dynamically from backend settings.
+2. **Owner/Admin File & Image Picker Support**:
+   - Integrated custom `WebChromeClient.onShowFileChooser`.
+   - Supports camera photo capture and gallery image selection using Android `FileProvider`.
+   - Enables stock management photo uploads directly within the Android app.
 
----
+3. **WhatsApp & System Deep Linking**:
+   - Intercepts WhatsApp links (`wa.me`, `whatsapp://`, `api.whatsapp.com`) and opens them directly in the official WhatsApp app.
+   - Intercepts `tel:` links to launch the device dialer with `9994645492`.
+   - Intercepts `mailto:` links for customer care email dispatch.
 
-## 🛠️ Technology Stack
+4. **Offline Error Handling**:
+   - Built-in network connectivity detection (`ConnectivityManager`).
+   - Automatic transition to custom offline UI (`activity_offline.xml`) with a **Retry Connection** button upon network loss or timeout.
 
-- **Frontend**: Semantic HTML5, CSS3 (CSS Variables, Flexbox, Grid), Vanilla JavaScript (ES6+ Modules).
-- **Backend**: Python 3.14 / 3.x with Flask REST API architecture.
-- **Database**: SQLite (SQL schema designed for seamless migration to MySQL/PostgreSQL).
-- **Security**: Werkzeug password hashing, session management, file upload type validation.
-- **Image Processing**: Pillow (PIL) for image thumbnailing and optimization.
+5. **Splash Screen**:
+   - Professional loading splash screen (`SplashActivity`) displaying the official C2T logo and brand tagline.
 
----
-
-## 🚀 Quick Setup & Local Execution
-
-### 1. Prerequisites
-Ensure Python 3.9+ is installed on your system.
-
-### 2. Create Virtual Environment & Install Dependencies
-Open terminal/cmd in the project root:
-
-```bash
-# Create virtual environment
-py -m venv venv
-
-# Activate virtual environment
-# On Windows PowerShell:
-.\venv\Scripts\Activate.ps1
-# On CMD:
-.\venv\Scripts\activate.bat
-
-# Install required Python packages
-pip install -r requirements.txt
-```
-
-### 3. Environment Configuration
-Copy `.env.example` to `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Ensure `.env` contains your desired settings:
-
-```env
-SECRET_KEY=c2t_mobiles_secret_key_change_in_production_2026
-DATABASE_URL=sqlite:///database/c2t_mobiles.db
-OWNER_WHATSAPP_NUMBER=919994645492
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin123
-BUSINESS_EMAIL=contact@c2tmobiles.com
-BUSINESS_NAME=C2T MOBILES
-PORT=5000
-```
-
-### 4. Seed Database with Sample Stock
-Run the database seed script to generate tables and populate sample smartphones (iPhone 13, iPhone 14, Galaxy S23 Ultra, OnePlus 12, Google Pixel 8, etc.):
-
-```bash
-python -m backend.seed
-```
-
-### 5. Run the Server
-Start the Flask application:
-
-```bash
-python -m backend.app
-```
-
-The application will start at:
-- **Customer Web Application**: `http://127.0.0.1:5000`
-- **Owner Admin Portal**: `http://127.0.0.1:5000/admin/login.html`
-
-**Default Admin Credentials**:
-- **Username**: `admin`
-- **Password**: `admin123`
+6. **Signed Release Keystore**:
+   - Generated signed release keystore: `app/c2t-release-key.jks`.
+   - Configured release signing in `app/build.gradle` via `app/keystore.properties`.
 
 ---
 
-## 📂 Project Directory Structure
+## 📁 Project Structure
 
-```text
-c2t-mobiles/
-├── backend/
-│   ├── app.py                  # Main Flask application entrypoint & static route handler
-│   ├── config.py               # Application configuration manager
-│   ├── database.py             # SQLite connection & schema initialization
-│   ├── seed.py                 # Seed script for initial sample smartphone stock
-│   ├── routes/
-│   │   ├── api_public.py       # REST API endpoints for catalog, detail, search & enquiries
-│   │   └── api_admin.py        # Protected REST API endpoints for admin inventory CRUD & settings
-│   └── utils/
-│       ├── auth.py             # Password hashing & session auth decorators
-│       └── helpers.py          # WhatsApp message generator, INR formatting & image optimizer
-├── frontend/
-│   ├── index.html              # Homepage
-│   ├── products.html           # Mobiles catalog page with filter sidebar & search bar
-│   ├── product.html            # Product detail view with gallery & condition matrix
-│   ├── about.html              # About Us page
-│   ├── contact.html            # Contact Us page
-│   ├── faq.html                # FAQ page with educational buyer guide
-│   ├── privacy.html            # Privacy Policy
-│   ├── terms.html              # Terms & Conditions
-│   ├── sitemap.xml             # Search engine XML sitemap
-│   ├── robots.txt              # Search engine directives
-│   ├── css/
-│   │   ├── style.css           # C2T MOBILES design system stylesheet
-│   │   └── responsive.css      # Mobile drawer & mobile bottom nav stylesheet
-│   ├── js/
-│   │   ├── api.js              # REST API wrapper client
-│   │   ├── app.js              # Core UI, drawer & WhatsApp link builder
-│   │   ├── products.js         # Catalog filtering, search & grid renderer
-│   │   └── product.js          # Detail view, gallery switcher & condition inspector
-│   └── admin/
-│       ├── login.html          # Secure Admin Login screen
-│       ├── dashboard.html      # Overview KPI statistics & enquiry tracking
-│       ├── products.html       # Inventory table with status toggle & delete modal
-│       ├── add-product.html    # Add mobile stock form with 15-point condition matrix
-│       ├── edit-product.html   # Edit mobile stock & image manager
-│       ├── settings.html       # WhatsApp & site configuration
-│       ├── css/
-│       │   └── admin.css       # Admin dashboard styles
-│       └── js/
-│           ├── admin-auth.js   # Admin session authentication guard
-│           ├── admin-dashboard.js
-│           ├── admin-products.js
-│           └── admin-form.js
-├── database/
-│   ├── schema.sql              # SQL table schema definitions & performance indexes
-│   └── c2t_mobiles.db          # SQLite database instance
-├── uploads/
-│   └── products/               # Optimized mobile stock photos directory
-├── .env.example                # Sample environment variables
-├── requirements.txt            # Python dependencies
-└── README.md                   # Full documentation
+```
+android/
+├── build.gradle                       # Top-level build configuration
+├── settings.gradle                    # Project module inclusions
+├── gradle.properties                  # AndroidX & JVM settings
+├── README.md                          # Android project documentation
+├── gradle/
+│   └── wrapper/
+│       └── gradle-wrapper.properties  # Gradle wrapper settings
+└── app/
+    ├── build.gradle                   # App module dependencies & signing config
+    ├── keystore.properties            # Release keystore credentials reference
+    ├── c2t-release-key.jks            # Production signed keystore file
+    ├── proguard-rules.pro             # ProGuard / R8 code obfuscation rules
+    └── src/
+        └── main/
+            ├── AndroidManifest.xml    # App permissions & activity declarations
+            ├── java/com/c2tmobiles/app/
+            │   ├── SplashActivity.java # Animated splash screen launcher
+            │   └── MainActivity.java   # WebView engine, file chooser, WhatsApp links
+            └── res/
+                ├── drawable/          # Splash logo & button drawables
+                ├── layout/            # activity_splash, activity_main, activity_offline
+                ├── mipmap-*/          # App launcher icons across all screen densities
+                ├── values/            # colors, strings, styles
+                └── xml/               # network_security_config, file_paths
 ```
 
 ---
 
-## 🔒 Production Deployment Notes
+## 🛠️ How to Build the APK
 
-1. **Production WSGI Server**:
-   Use `gunicorn` or `waitress` instead of the development server:
-   ```bash
-   pip install gunicorn
-   gunicorn backend.app:app -w 4 -b 0.0.0.0:5000
+### Method 1: Android Studio (Recommended)
+
+1. Open **Android Studio**.
+2. Select **Open an Existing Project** and browse to `c:\Users\madhavan\Desktop\C2T\android`.
+3. Allow Android Studio to sync Gradle dependencies.
+4. To build a debug APK:
+   - Click **Build > Build APK(s)**.
+5. To build a signed Production APK:
+   - Click **Build > Generate Signed Bundle / APK...**
+   - Choose **APK** and click **Next**.
+   - Select Key Store Path: `app/c2t-release-key.jks`.
+   - Keystore Password: `C2TMobilesSecureStorePass2026!`
+   - Key Alias: `c2t-key-alias`
+   - Key Password: `C2TMobilesSecureStorePass2026!`
+   - Choose **release** build variant and click **Create**.
+   - The signed production APK will be created in `app/build/outputs/apk/release/app-release.apk`.
+
+### Method 2: Command Line (Gradle Wrapper)
+
+Ensure JDK 17+ or JDK 21 is set in your `JAVA_HOME` environment variable, then run:
+
+```bash
+cd android
+./gradlew assembleRelease
+```
+
+The compiled release APK will be located at:
+`app/build/outputs/apk/release/app-release.apk`
+
+---
+
+## ⚙️ Changing Production Web URL
+
+To update or change the target URL loaded by the application (for staging or custom domains):
+
+1. Open `app/src/main/res/values/strings.xml`.
+2. Edit the `<string name="app_url">` value:
+   ```xml
+   <!-- Production URL -->
+   <string name="app_url">https://c2tmobiles.com</string>
+
+   <!-- Local Emulator Testing URL -->
+   <!-- <string name="app_url">http://10.0.2.2:5000</string> -->
    ```
 
-2. **Reverse Proxy & SSL**:
-   Run behind Nginx or Cloudflare with HTTPS enabled for security.
+---
 
-3. **Database Migration to PostgreSQL/MySQL**:
-   Replace `sqlite3` driver in `backend/database.py` with `psycopg2` or `pymysql` when scaling to multi-server environments.
+## 🔒 Security & Keystore Details
+
+- **Keystore Location**: `android/app/c2t-release-key.jks`
+- **Keystore Alias**: `c2t-key-alias`
+- **Store Password**: `C2TMobilesSecureStorePass2026!`
+- **Key Password**: `C2TMobilesSecureStorePass2026!`
+- **Validity**: 10,000 Days
+
+> ⚠️ Keep `c2t-release-key.jks` backed up safely. It is required to publish updates to Google Play Store.
+
+---
+
+## 🔑 Permissions Declared
+
+- `android.permission.INTERNET`
+- `android.permission.ACCESS_NETWORK_STATE`
+- `android.permission.CAMERA`
+- `android.permission.READ_MEDIA_IMAGES`
+- `android.permission.READ_EXTERNAL_STORAGE`

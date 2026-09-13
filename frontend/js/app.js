@@ -67,9 +67,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.body.style.overflow = '';
     };
 
-    mobileToggle.addEventListener('click', openDrawer);
+    mobileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (mobileDrawer.classList.contains('active')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
     drawerOverlay.addEventListener('click', closeDrawer);
     if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+
+    // Auto-close drawer when clicking any link inside drawer
+    const drawerLinks = mobileDrawer.querySelectorAll('a, button');
+    drawerLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
   }
 
   // 4. Highlight Active Navigation Item
